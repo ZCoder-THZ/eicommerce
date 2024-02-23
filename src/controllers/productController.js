@@ -31,6 +31,18 @@ const createProduct = async (req, res, next) => {
         res.status(500).json({ success: false, message: 'Internal Server Error', error: error.message });
     }
 };
+const deleteProduct = async (req, res) => {
+    const id = req.params.id * 1;
+    const product = await prisma.products.findUnique({
+        where: {
+            id
+        },
+    });
+
+    return res.status(200).json({ product })
+    // return retrivedSuccess(res, 200, 'Products', data);
+
+}
 
 
-module.exports = { getProducts, createProduct };
+module.exports = { getProducts, createProduct, deleteProduct };

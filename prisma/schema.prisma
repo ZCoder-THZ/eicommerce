@@ -7,20 +7,164 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model products {
-  id             Int        @id @default(autoincrement())
-  product_name   String     @db.VarChar(255)
-  description    String     @db.VarChar(1025)
-  price          Int
-  stock_quantity Int
-  category_id    Int
-  categories     categories @relation(fields: [category_id], references: [category_id])
-
-  @@index([category_id], map: "products_category_id_fkey")
+model Admin {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  email    String @db.VarChar(100)
+  password String @db.VarChar(255)
 }
 
-model categories {
-  category_id   Int        @id @default(autoincrement())
-  category_name String
-  products      products[]
+model Cart {
+  id         Int   @id @default(autoincrement())
+  product_id Int?
+  user_id    Int?
+  quantity   Int?
+  User       User? @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "Cart_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Categories {
+  id            Int             @id @default(autoincrement())
+  title         String          @db.VarChar(255)
+  created_at    DateTime?       @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?       @default(now()) @db.Timestamp(0)
+  Products      Products[]
+  SubCategories SubCategories[]
+}
+
+model Command {
+  id           Int            @id @default(autoincrement())
+  product_id   Int?
+  user_id      Int?
+  command      String?        @db.Text
+  created_at   DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?      @default(now()) @db.Timestamp(0)
+  Products     Products?      @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "Command_ibfk_1")
+  User         User?          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "Command_ibfk_2")
+  CommandReply CommandReply[]
+
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+model CommandReply {
+  id          Int       @id @default(autoincrement())
+  product_id  Int?
+  user_id     Int?
+  command_id  Int?
+  description String?   @db.Text
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  Products    Products? @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "CommandReply_ibfk_1")
+  User        User?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "CommandReply_ibfk_2")
+  Command     Command?  @relation(fields: [command_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "CommandReply_ibfk_3")
+
+  @@index([command_id], map: "command_id")
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+model ORDER {
+  id          Int                @id @default(autoincrement())
+  product_id  Int?
+  user_id     Int?
+  created_at  DateTime?          @default(now()) @db.DateTime(0)
+  quantity    Int?
+  phone       String?            @db.VarChar(20)
+  address     String?            @db.VarChar(255)
+  orderStatus ORDER_orderStatus?
+  User        User?              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ORDER_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Products {
+  id            Int              @id @default(autoincrement())
+  title         String           @db.VarChar(255)
+  description   String?          @db.Text
+  stock         Int?
+  price         Decimal?         @db.Decimal(10, 2)
+  product_image String?          @db.VarChar(255)
+  category_id   Int?
+  brand_name    String?          @db.VarChar(255)
+  gender        Products_gender?
+  created_at    DateTime?        @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?        @default(now()) @db.Timestamp(0)
+  Command       Command[]
+  CommandReply  CommandReply[]
+  Categories    Categories?      @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "Products_ibfk_1")
+  Rating        Rating[]
+
+  @@index([category_id], map: "category_id")
+}
+
+model Profile {
+  id      Int     @id @default(autoincrement())
+  user_id Int?    @unique(map: "user_id")
+  avatar  String? @db.VarChar(255)
+  User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "Profile_ibfk_1")
+}
+
+model Rating {
+  id         Int            @id @default(autoincrement())
+  product_id Int?
+  rating     Rating_rating?
+  user_id    Int?
+  created_at DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at DateTime?      @default(now()) @db.Timestamp(0)
+  Products   Products?      @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "Rating_ibfk_1")
+  User       User?          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "Rating_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+model SubCategories {
+  id          Int         @id @default(autoincrement())
+  category_id Int?
+  title       String      @db.VarChar(255)
+  created_at  DateTime?   @default(now()) @db.Timestamp(0)
+  updated_at  DateTime?   @default(now()) @db.Timestamp(0)
+  Categories  Categories? @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "SubCategories_ibfk_1")
+
+  @@index([category_id], map: "category_id")
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  full_name    String         @db.VarChar(255)
+  email        String         @db.VarChar(100)
+  phone        String?        @db.VarChar(20)
+  password     String         @db.VarChar(255)
+  created_at   DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?      @default(now()) @db.Timestamp(0)
+  Cart         Cart[]
+  Command      Command[]
+  CommandReply CommandReply[]
+  ORDER        ORDER[]
+  Profile      Profile?
+  Rating       Rating[]
+}
+
+enum Rating_rating {
+  unknown
+  // 1 @map("1")
+  // 2 @map("2")
+  // 3 @map("3")
+  // 4 @map("4")
+  // 5 @map("5")
+}
+
+enum ORDER_orderStatus {
+  success
+  fail
+  pending
+}
+
+enum Products_gender {
+  male
+  female
 }

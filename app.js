@@ -16,7 +16,7 @@ const port = process.env.PORT || 4001;
 app.use(cors())
 app.use(express.json())
 app.use(bodyParser.json())
-app.use(router)
+// app.use(router)
 
 
 app.listen(port, () => {
