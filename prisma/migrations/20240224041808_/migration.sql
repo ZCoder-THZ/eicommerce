@@ -1,44 +1,3 @@
-/*
-  Warnings:
-
-  - The primary key for the `categories` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to drop the column `category_id` on the `categories` table. All the data in the column will be lost.
-  - You are about to drop the column `category_name` on the `categories` table. All the data in the column will be lost.
-  - You are about to drop the column `product_name` on the `products` table. All the data in the column will be lost.
-  - You are about to drop the column `stock_quantity` on the `products` table. All the data in the column will be lost.
-  - You are about to alter the column `price` on the `products` table. The data in that column could be lost. The data in that column will be cast from `Int` to `Decimal(10,2)`.
-  - Added the required column `id` to the `Categories` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `title` to the `Categories` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `title` to the `Products` table without a default value. This is not possible if the table is not empty.
-
-*/
--- DropForeignKey
-ALTER TABLE `products` DROP FOREIGN KEY `products_category_id_fkey`;
-
--- AlterTable
-ALTER TABLE `categories` DROP PRIMARY KEY,
-    DROP COLUMN `category_id`,
-    DROP COLUMN `category_name`,
-    ADD COLUMN `created_at` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `id` INTEGER NOT NULL AUTO_INCREMENT,
-    ADD COLUMN `title` VARCHAR(255) NOT NULL,
-    ADD COLUMN `updated_at` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD PRIMARY KEY (`id`);
-
--- AlterTable
-ALTER TABLE `products` DROP COLUMN `product_name`,
-    DROP COLUMN `stock_quantity`,
-    ADD COLUMN `brand_name` VARCHAR(255) NULL,
-    ADD COLUMN `created_at` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `gender` ENUM('male', 'female') NULL,
-    ADD COLUMN `product_image` VARCHAR(255) NULL,
-    ADD COLUMN `stock` INTEGER NULL,
-    ADD COLUMN `title` VARCHAR(255) NOT NULL,
-    ADD COLUMN `updated_at` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    MODIFY `description` TEXT NULL,
-    MODIFY `price` DECIMAL(10, 2) NULL,
-    MODIFY `category_id` INTEGER NULL;
-
 -- CreateTable
 CREATE TABLE `Admin` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -58,6 +17,16 @@ CREATE TABLE `Cart` (
 
     INDEX `product_id`(`product_id`),
     INDEX `user_id`(`user_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Categories` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL,
+    `created_at` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updated_at` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -104,6 +73,24 @@ CREATE TABLE `ORDER` (
 
     INDEX `product_id`(`product_id`),
     INDEX `user_id`(`user_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Products` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL,
+    `description` TEXT NULL,
+    `stock` INTEGER NULL,
+    `price` DECIMAL(10, 2) NULL,
+    `product_image` VARCHAR(255) NULL,
+    `category_id` INTEGER NULL,
+    `brand_name` VARCHAR(255) NULL,
+    `gender` ENUM('male', 'female') NULL,
+    `created_at` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updated_at` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    INDEX `category_id`(`category_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -191,7 +178,3 @@ ALTER TABLE `Rating` ADD CONSTRAINT `Rating_ibfk_2` FOREIGN KEY (`user_id`) REFE
 
 -- AddForeignKey
 ALTER TABLE `SubCategories` ADD CONSTRAINT `SubCategories_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `Categories`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
-
--- RedefineIndex
-CREATE INDEX `category_id` ON `Products`(`category_id`);
-DROP INDEX `products_category_id_fkey` ON `products`;

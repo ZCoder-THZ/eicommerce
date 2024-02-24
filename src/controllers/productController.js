@@ -1,7 +1,9 @@
 // productController.js
 const prisma = require('../../config/db.config');
+const { getItem, deleteItem } = require('../utils/itemUtils');
 const { retrivedSuccess, createSuccess } = require('../utils/jsonResponse');
 const { validationResult } = require('express-validator');
+
 
 
 const getProducts = async (req, res) => {
@@ -11,17 +13,17 @@ const getProducts = async (req, res) => {
 
 const createProduct = async (req, res, next) => {
     try {
-        const errors = validationResult(req);
+        // const errors = validationResult(req);
 
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        // if (!errors.isEmpty()) {
+        //     return res.status(400).json({ errors: errors.array() });
+        // }
         // If validation passed, continue with the logic
-        const { product_name, price, stock_quantity, description, category_id } = req.body;
+        const { title, price, stock,brand_name,gender,product_image, description, category_id } = req.body;
 
         // Create the product in the database
         const data = await prisma.products.create({
-            data: { product_name, price, stock_quantity, description, category_id },
+            data: { title, price, stock,brand_name,gender,product_image, description, category_id },
         });
 
         // Send a successful response with the created product data
@@ -32,17 +34,14 @@ const createProduct = async (req, res, next) => {
     }
 };
 const deleteProduct = async (req, res) => {
-    const id = req.params.id * 1;
-    const product = await prisma.products.findUnique({
-        where: {
-            id
-        },
-    });
-
-    return res.status(200).json({ product })
-    // return retrivedSuccess(res, 200, 'Products', data);
+        deleteItem(req, res, prisma.products);
 
 }
 
 
-module.exports = { getProducts, createProduct, deleteProduct };
+const getProduct = (req, res) => {
+         getItem(req, res, prisma.products);
+}
+
+
+module.exports = { getProducts, createProduct, deleteProduct ,getProduct};

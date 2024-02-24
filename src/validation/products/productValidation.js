@@ -2,9 +2,9 @@
 const { body, validationResult } = require('express-validator');
 
 const productValidationRules = [
-    body('product_name').notEmpty().withMessage('Product name is required'),
+    body('title').notEmpty().withMessage('Product name is required'),
     body('price').isFloat().withMessage('Price must be a  number').notEmpty().withMessage('price is required'),
-    body('stock_quantity').isInt().withMessage('Stock quantity must be a valid integer'),
+    body('stock').isInt().withMessage('Stock quantity must be a valid integer'),
     body('description').notEmpty().withMessage('Description is required'),
     body('category_id').isInt().withMessage('Category ID must be a valid integer'),
 ];

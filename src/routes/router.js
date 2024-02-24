@@ -1,11 +1,13 @@
 const router = require("express").Router();
 const userRoute = require("./userRoute.js");
-// const { getProducts, createProduct, deleteProduct } = require('../controllers/productController')
-// const { productValidationRules } = require('../validation/products/productValidation')
-
-// router.route('/products').get(getProducts).post(productValidationRules, createProduct)
-// router.route('/products/:id').delete(deleteProduct)
-
+const productRoute=require('./productRoute.js')
+const categoryRoute=require('./categoryRoute.js')
+const subCategoryRoute=require('./subCategoryRoute.js')
 router.use("/", userRoute);
+router.use('/products',productRoute);
+router.use('/categories',categoryRoute);
+router.use('/subCategories',subCategoryRoute);
+
+
 
 module.exports = router;
