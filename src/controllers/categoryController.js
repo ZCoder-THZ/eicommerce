@@ -1,6 +1,6 @@
 const prisma=require('../../config/db.config')
 const { retrivedSuccess, createSuccess } = require('../utils/jsonResponse');
-const { getItem, deleteItem } = require('../utils/itemUtils');
+const {getItem, deleteItem}=require('../utils/itemUtils')
 
 exports.getCategories=async(req,res)=>{
     const data=await prisma.categories.findMany({})
@@ -21,4 +21,26 @@ exports.createCategory=async(req,res)=>{
    } catch (error) {
     return res.json(error)
    }
+}
+
+exports.getCategory=(req,res)=>{
+    getItem(req,res,prisma.categories);
+}
+exports.deleteCategory=(req,res)=>{
+    deleteItem(req,res,prisma.categories);
+}
+exports.updateCategory=async (req,res)=>{
+    try {
+		const id = req.params.id * 1;
+		// Create the product in the database
+		const update = await prisma.categories.update({
+			where: {
+				id,
+			},
+			data: req.body,
+		});
+		return res.json(update);
+	} catch (error) {
+		return res.send(error);
+	}
 }

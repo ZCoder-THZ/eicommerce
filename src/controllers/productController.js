@@ -16,7 +16,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
 const getProducts = async (req, res) => {
     const data = await prisma.products.findMany({});
     return retrivedSuccess(res, 200, 'Products', data);
@@ -39,14 +38,10 @@ const createProduct = async (req, res, next) => {
 };
 const deleteProduct = async (req, res) => {
         deleteItem(req, res, prisma.products);
-
 }
-
-
 const getProduct = (req, res) => {
          getItem(req, res, prisma.products);
 }
-
 const uploadImage = (req, res) => {
     upload.single('file')(req, res, function (err) {
         if (err instanceof multer.MulterError) {

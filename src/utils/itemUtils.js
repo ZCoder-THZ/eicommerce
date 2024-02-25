@@ -1,6 +1,5 @@
 
 exports.getItem=async(req,res,item)=>{
-  
     try {
         const data=await item.findUnique({
             where:{
@@ -14,7 +13,7 @@ exports.getItem=async(req,res,item)=>{
         })
         if(data)return res.json(data)
 
-        return res.status(404).json({message:'Product not found'});
+        return res.status(404).json({message:'Item not found'});
 
     } catch (error) {
         return res.json(error)
@@ -22,7 +21,7 @@ exports.getItem=async(req,res,item)=>{
 }
 
 exports.deleteItem=async(req,res,item)=>{
-  
+    // Delete the product from the database category /products
     try {
         const data = await item.delete({
             where: {
