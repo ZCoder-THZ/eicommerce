@@ -11,7 +11,7 @@ const router = require("./src/routes/router");
 colors.enable();
 const app = express();
 const port = process.env.PORT || 4001;
-
+app.use('/uploads', express.static('uploads'));
 // middlewares
 app.use(cors());
 app.use(express.json());

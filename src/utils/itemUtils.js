@@ -6,10 +6,7 @@ exports.getItem=async(req,res,item)=>{
                 id:parseInt(req.params.id)
             },
         
-                // include: {
-                //     Categories: true // Include the Categories relation
-                // }
-            
+                include: undefined
         })
         if(data)return res.json(data)
 

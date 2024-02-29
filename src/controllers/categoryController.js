@@ -10,11 +10,9 @@ exports.getCategories=async(req,res)=>{
 exports.createCategory=async(req,res)=>{
    try {
 
-    const {title}=req.body
+    // const {title}=req.body
     const data=await prisma.categories.create({
-        data:{
-            title
-        }
+        data:req.body
     })
     createSuccess(res,200,'Categories',data)
 
