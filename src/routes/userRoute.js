@@ -1,44 +1,13 @@
 const router = require("express").Router();
-
 const {
 	getUsers,
 	createUser,
 	updateUser,
 	deleteUser,
 } = require("../controllers/userController");
-
-const middleware = (req, res, next) => {
-	if (req.body.name) {
-		next();
-	} else {
-		return res.json("name is not defined");
-	}
-};
-
 router.route("/users").get(getUsers).post(createUser);
-
-const middleware=(req,res,next)=>{
-	if(req.body.email && req.body.password){
-		if(req.body.password.length < 8){
-			return res.status(400).send("Password must be at least 8 characters")
-
-		}else{
-
-		next()
-			
-		}
-	}else{
-		return res.status(400).send("All fields are required")
-	}
-}
-router.route("/login").post(middleware,(req,res)=>{
-	
-
-
+router.route("/login").post((req,res)=>{
 	return res.status(200).send("Login Successful")
-
 })
-
-router.route("/users/:id").put(middleware,updateUser).delete(deleteUser);
-
+router.route("/users/:id").put(updateUser).delete(deleteUser);
 module.exports = router;
